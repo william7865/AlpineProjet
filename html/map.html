@@ -41,9 +41,9 @@
             <div class="magasin-liste" x-data="{
                 search: '',
                 stores: [
-                    { name: 'Efrei Paris', distance: '0.5 km', address: '14 Rue de la Libération, 94000 Créteil' },
-                    { name: 'Efrei Campus Paris', distance: '0.9 km', address: '8 Rue de la Liberté, 94000 Créteil' },
-                    { name: 'Efrei Centre d\'Innovation', distance: '1.2 km', address: '6 Rue des Écoles, 94000 Créteil' }
+                    { name: 'Efrei Paris', distance: '0.5 km', address: '30-32 Av. de la République, 94800 Villejuif' },
+                    { name: 'Efrei Campus Gorki', distance: '0.9 km', address: '136 bis Bd Maxime Gorki, 94800 Villejuif' },
+                    { name: 'Efrei La Factory', distance: '1.2 km', address: '143 -145 Bd Maxime Gorki, 94800 Villejuif' }
                 ],
                 get filteredStores() {
                     return this.stores.filter(store => store.name.toLowerCase().includes(this.search.toLowerCase()));
