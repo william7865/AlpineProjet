@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrouvez nos magasins</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@latest/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="../css/map.css">
+
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("theme", () => ({
+                isDark: Alpine.$persist(false).as("isDark"),
+                toggle() {
+                    this.isDark = !this.isDark;
+                },
+            }));
+        });
+    </script>
+</head>
+<body x-data="theme" :class="isDark ? 'dark-mode' : 'light-mode'">
+    <header>
+        <img src="../images/Efrei.png" alt="Logo">
+        <nav>
+            <a href="../html/index.html">Produits</a>
+            <a href="../html/map.html">Nos Magasins</a>
+            <button @click="toggle" class="ml-4">
+                <i class="ph-bold text-xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
+            </button>
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="magasin-header">
+            <h1>Retrouvez nos magasins</h1>
+            <p>Choisissez votre magasin pour afficher les détails !</p>
+        </div>
+        <div class="magasin-search">
+            <div class="magasin-liste" x-data="{
+                search: '',
+                stores: [
+                    { name: 'Efrei Paris', distance: '0.5 km', address: '14 Rue de la Libération, 94000 Créteil' },
+                    { name: 'Efrei Campus Paris', distance: '0.9 km', address: '8 Rue de la Liberté, 94000 Créteil' },
+                    { name: 'Efrei Centre d\'Innovation', distance: '1.2 km', address: '6 Rue des Écoles, 94000 Créteil' }
+                ],
+                get filteredStores() {
+                    return this.stores.filter(store => store.name.toLowerCase().includes(this.search.toLowerCase()));
+                }
+            }">
+                <input x-model="search" type="text" placeholder="Veuillez entrer le nom du magasin">
+                <template x-for="store in filteredStores" :key="store.name">
+                    <div class="magasin-liste-item">
+                        <div>
+                            <h3 x-text="store.name"></h3>
+                            <p x-text="store.address"></p>
+                            <p x-text="store.distance"></p>
+                        </div>
+                        <button>Choisir</button>
+                    </div>
+                </template>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5257.284666374812!2d2.3611763761630566!3d48.788718171322806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e673e24e04a9c3%3A0xc55cb3e676f95321!2sEfrei!5e0!3m2!1sfr!2sfr!4v1729442647827!5m2!1sfr!2sfr" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 MagEfrei - Tous droits réservés.</p>
+        <p>
+            <a href="#">Conditions générales d'utilisation</a> | 
+            <a href="#">Politique de confidentialité</a> | 
+            <a href="#">Nous contacter</a>
+        </p>
+    </footer>
+</body>
+</html>

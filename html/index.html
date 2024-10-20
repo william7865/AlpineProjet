@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagEfrei - Bienvenue</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@latest/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/app.js" defer></script>
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("theme", () => ({
+                isDark: Alpine.$persist(false).as("isDark"),
+                toggle() {
+                    this.isDark = !this.isDark;
+                },
+            }));
+        });
+    </script>
+</head>
+<body x-data="theme" :class="isDark ? 'dark-mode' : 'light-mode'" class="h-full">
+    <header>
+        <img src="../images/Efrei.png" alt="Logo">
+        <nav>
+            <a href="../html/index.html">Produits</a>
+            <a href="../html/map.html">Nos Magasins</a>
+            <a href="#" id="panierLink">Panier</a>
+            <button @click="toggle" class="ml-4">
+                <i class="ph-bold text-xl" :class="isDark ? 'ph-sun' : 'ph-moon'"></i>
+            </button>
+        </nav>
+    </header>
+    <div class="titre">
+        <h1>Bienvenue chez MagEfrei</h1>
+    </div>
+
+    <div class="content" x-data="{
+        search: '',
+        produits: [
+            { id: 1, nom: 'Avocat', prix: '1,39€', offre: '2 achetés = 2,5€', details: 'Détails du produit', image: '../images/Avocat.png' },
+            { id: 2, nom: 'Saumon', prix: '10,39€', offre: 'PROMO : -20%', details: 'Détails du produit', image: '../images/saumon.jpg' },
+            { id: 3, nom: 'Pain', prix: '4,39€', offre: '1 acheté = 1 offert', details: 'Détails du produit', image: '../images/pain.jpg' },
+            { id: 4, nom: 'Shampoing', prix: '4,95€', offre: '34% d\'économies', details: 'Détails du produit', image: '../images/shampoing.jpg' },
+            { id: 5, nom: 'Coca-Cola', prix: '2,45€', offre: 'Le 2ème à -60%', details: 'Détails du produit', image: '../images/coca.webp' }],
+        cart: [],
+        get filteredProduits() {
+            return this.produits.filter(produit => produit.nom.toLowerCase().includes(this.search.toLowerCase()))
+        },
+        addToCart(produit) {
+            this.cart.push(produit);
+            document.getElementById('popup').style.display = 'flex';
+        },
+    }">
+        <div class="search-bar">
+            <input x-model="search" placeholder="Rechercher un produit..." class="border p-2">
+        </div>
+
+        <div class="produits">
+            <template x-for="produit in filteredProduits" :key="produit.id">
+                <div class="produit">
+                    <img :src="produit.image" :alt="produit.nom">
+                    <h3 x-text="produit.nom"></h3>
+                    <p class="prix" x-text="produit.prix"></p>
+                    <p class="offre" x-text="produit.offre"></p>
+                    <button @click="addToCart(produit)">Ajouter au panier</button>
+                    <div x-data="{ open: false }">
+                        <button @click="open = !open" class="en-savoir-plus">En savoir plus</button>
+                        <div x-show="open" class="details" x-text="produit.details"></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <h2>Votre Panier</h2>
+                <ul>
+                    <template x-for="item in cart" :key="item.id">
+                        <li>
+                            <div x-data="{ count: 1 }">
+                                <span x-text="item.nom + ' - ' + item.prix "></span>
+                                <button @click="count--">-</button>
+                                <span x-text="count"></span>
+                                <button @click="count++">+</button>
+                            </div>
+                        </li>
+                    </template>
+                    <template x-if="cart.length === 0">
+                        <li>Aucun produit dans le panier.</li>
+                    </template>
+                </ul>
+                <button id="closeButton">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 MagEfrei - Tous droits réservés.</p>
+        <p>
+            <a href="#">Conditions générales d'utilisation</a> | 
+            <a href="#">Politique de confidentialité</a> | 
+            <a href="#">Nous contacter</a>
+        </p>
+    </footer>
+</body>
+</html>
