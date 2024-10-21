@@ -54,9 +54,8 @@
         },
     }">
         <div class="search-bar">
-            <input x-model="search" placeholder="Rechercher un produit..." class="border p-2">
+            <input x-model="search" placeholder="Rechercher un produit">
         </div>
-
         <div class="produits">
             <template x-for="produit in filteredProduits" :key="produit.id">
                 <div class="produit">
