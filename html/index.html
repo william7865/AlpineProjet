@@ -39,29 +39,46 @@
     <div class="content" x-data="{
         search: '',
         produits: [
-            { id: 1, nom: 'Avocat', prix: '1,39€', offre: '2 achetés = 2,5€', details: 'Détails du produit', image: '../images/Avocat.png' },
-            { id: 2, nom: 'Saumon', prix: '10,39€', offre: 'PROMO : -20%', details: 'Détails du produit', image: '../images/saumon.jpg' },
-            { id: 3, nom: 'Pain', prix: '4,39€', offre: '1 acheté = 1 offert', details: 'Détails du produit', image: '../images/pain.jpg' },
-            { id: 4, nom: 'Shampoing', prix: '4,95€', offre: '34% d\'économies', details: 'Détails du produit', image: '../images/shampoing.jpg' },
-            { id: 5, nom: 'Coca-Cola', prix: '2,45€', offre: 'Le 2ème à -60%', details: 'Détails du produit', image: '../images/coca.webp' }],
+            { id: 1, nom: 'Avocat', prix: 1, offre: '2 achetés = 2,5€', details: 'Détails du produit', image: '../images/Avocat.png' },
+            { id: 2, nom: 'Saumon', prix: 10, offre: 'PROMO : -20%', details: 'Détails du produit', image: '../images/saumon.jpg' },
+            { id: 3, nom: 'Pain', prix: 4, offre: '1 acheté = 1 offert', details: 'Détails du produit', image: '../images/pain.jpg' },
+            { id: 4, nom: 'Shampoing', prix: 5, offre: '34% d\'économies', details: 'Détails du produit', image: '../images/shampoing.jpg' },
+            { id: 5, nom: 'Coca-Cola', prix: 2, offre: 'Le 2ème à -60%', details: 'Détails du produit', image: '../images/coca.webp' }
+        ],
         cart: [],
-        get filteredProduits() {
-            return this.produits.filter(produit => produit.nom.toLowerCase().includes(this.search.toLowerCase()))
-        },
         addToCart(produit) {
-            this.cart.push(produit);
+            const itemInCart = this.cart.find(item => item.id === produit.id);
+            if (itemInCart) {
+                itemInCart.quantity++;
+            } else {
+                this.cart.push({ ...produit, quantity: 1 });
+            }
             document.getElementById('popup').style.display = 'flex';
         },
+        totalPrix() {
+            return this.cart.reduce((total, item) => total + item.prix * item.quantity, 0) + ' €';
+        },
+        increment(item) {
+            item.quantity++;
+        },
+        decrement(item) {
+            if (item.quantity > 1) {
+                item.quantity--;
+            }
+        },
+        viderPanier() {
+            this.cart = [];
+        }
     }">
         <div class="search-bar">
             <input x-model="search" placeholder="Rechercher un produit">
         </div>
         <div class="produits">
-            <template x-for="produit in filteredProduits" :key="produit.id">
+            <template x-for="produit in produits.filter(p => p.nom.toLowerCase().includes(search.toLowerCase()))" :key="produit.id">
                 <div class="produit">
                     <img :src="produit.image" :alt="produit.nom">
                     <h3 x-text="produit.nom"></h3>
-                    <p class="prix" x-text="produit.prix"></p>
+                    <p class="prix" x-text="produit.prix + ' €'"></p>
                     <p class="offre" x-text="produit.offre"></p>
                     <button @click="addToCart(produit)">Ajouter au panier</button>
                     <div x-data="{ open: false }">
@@ -77,11 +94,11 @@
                 <ul>
                     <template x-for="item in cart" :key="item.id">
                         <li>
-                            <div x-data="{ count: 1 }">
-                                <span x-text="item.nom + ' - ' + item.prix "></span>
-                                <button @click="count--">-</button>
-                                <span x-text="count"></span>
-                                <button @click="count++">+</button>
+                            <div>
+                                <span x-text="item.nom + ' - ' + item.prix + ' €'"></span>
+                                <button @click="decrement(item)">-</button>
+                                <span x-text="item.quantity"></span>
+                                <button @click="increment(item)">+</button>
                             </div>
                         </li>
                     </template>
@@ -89,7 +106,9 @@
                         <li>Aucun produit dans le panier.</li>
                     </template>
                 </ul>
+                <p><strong>Total:</strong> <span x-text="totalPrix()"></span></p>
                 <button id="closeButton">Fermer</button>
+                <button id="viderPanier" @click="viderPanier()">Vider le panier</button>
             </div>
         </div>
     </div>
